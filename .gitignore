@@ -1,0 +1,6 @@
+playbooks/*/*
+playbooks/*
+
+!playbooks/firstrun_example.com.yml
+!playbooks/groups/configure_example.com.yml
+!playbooks/groups/update_example.com.yml

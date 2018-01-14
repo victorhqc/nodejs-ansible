@@ -1,0 +1,54 @@
+---
+# - name: Add certbot repository
+#   become: true
+#   apt_repository:
+#     repo: 'ppa:certbot/certbot'
+
+- name: Download dependencies
+  become: true
+  apt:
+    update_cache: true
+    name:
+      - nginx
+      - python
+      # - python-certbot-nginx
+
+- name: Install PM2 & yarn
+  shell: . $NVM_DIR/nvm.sh && nvm use {{ node_version }} && npm i pm2 yarn -g
+  args:
+    executable: /bin/bash
+
+# - name: Obtain SSL Certificate
+#   shell: certbot --nginx -d {{ domain }} -d www.{{ domain }}
+#   args:
+#     executable: /bin/bash
+
+- name: Clone repository
+  git:
+    repo: '{{ git_repository }}'
+    dest: /home/{{ user }}/{{ domain }}
+    version: '{{ git_version }}'
+
+- name: Configure domain (server block)
+  become: true
+  template:
+    src: templates/domain
+    dest: /etc/nginx/sites-available/{{ domain }}
+    owner: root
+    group: root
+    mode: 0644
+
+- name: Enable domain (server block)
+  become: true
+  file:
+    src: /etc/nginx/sites-available/{{ domain }}
+    dest: /etc/nginx/sites-enabled/{{ domain }}
+    owner: root
+    group: root
+    state: link
+
+- name: Install node dependencies
+  shell: . $NVM_DIR/nvm.sh && nvm use {{ node_version }} && cd ~/{{ domain }} && yarn
+
+- name: Start Node.js server
+  shell: . $NVM_DIR/nvm.sh && nvm use {{ node_version }} && cd ~/{{ domain }} && pm2 start --name {{ domain }} npm -- start

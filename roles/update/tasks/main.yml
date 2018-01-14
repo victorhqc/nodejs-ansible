@@ -1,0 +1,12 @@
+---
+- name: Clone repository
+  git:
+    repo: '{{ git_repository }}'
+    dest: /home/{{ user }}/{{ domain }}
+    version: '{{ git_version }}'
+
+- name: Install node dependencies
+  shell: . $NVM_DIR/nvm.sh && nvm use {{ node_version }} && cd ~/{{ domain }} && yarn
+
+- name: Start Node.js server
+  shell: . $NVM_DIR/nvm.sh && nvm use {{ node_version }} && cd ~/{{ domain }} && pm2 restart {{ domain }}

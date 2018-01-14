@@ -1,0 +1,12 @@
+---
+- hosts: localhost
+  vars:
+    domain: example.com
+  roles:
+    - create_ssh_key
+- hosts: example
+  user: user
+  vars:
+    domain: example.com
+  roles:
+    -create_user

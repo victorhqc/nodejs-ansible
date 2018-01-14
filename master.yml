@@ -1,0 +1,2 @@
+---
+- include: playbooks/groups/first_deploy_example.com.yml
