@@ -51,4 +51,4 @@
   shell: . $NVM_DIR/nvm.sh && nvm use {{ node_version }} && cd ~/{{ domain }} && yarn
 
 - name: Start Node.js server
-  shell: . $NVM_DIR/nvm.sh && nvm use {{ node_version }} && cd ~/{{ domain }} && pm2 start --name {{ domain }} npm -- start
+  shell: . $NVM_DIR/nvm.sh && nvm use {{ node_version }} && cd ~/{{ domain }} && port={{website_port}} pm2 start --name {{ domain }} npm -- start
